@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+.ipynb_checkpoints/
+
+.env
+
+*.pt
+*.pth
+
+Pipeline_Frontend/streamlit.out.log
+Pipeline_Frontend/streamlit.err.log

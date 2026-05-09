@@ -1,0 +1,7 @@
+{
+  "fold": 0,
+  "epoch": 249,
+  "checkpoint": "checkpoint_final.pth",
+  "mirrored_to": "/content/drive/MyDrive/gp2/checkpoints/Dataset304_BraTS2023_GLI_MEN_4modal_Regions/nnUNetTrainerBudget250Epochs__nnUNetResEncUNetMPlans__3d_fullres/fold_0/checkpoint_final.pth",
+  "output_folder": "/content/drive/MyDrive/gp2/checkpoints/Dataset304_BraTS2023_GLI_MEN_4modal_Regions/nnUNetTrainerBudget250Epochs__nnUNetResEncUNetMPlans__3d_fullres/fold_0"
+}

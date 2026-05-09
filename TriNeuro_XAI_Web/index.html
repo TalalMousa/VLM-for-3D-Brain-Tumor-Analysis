@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TriNeuro AI</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="dashboard-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <img class="brand-logo" src="assets/trineuro-logo.svg" alt="TriNeuro AI" />
+        </div>
+
+        <nav class="nav-panel" aria-label="Primary navigation">
+          <button class="nav-item active" data-view="analysisView" type="button">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 13h4l2-6 4 10 2-4h4"/><path d="M4 19h16"/></svg>
+            </span>
+            Analysis
+          </button>
+          <button class="nav-item" data-view="visualizationView" type="button">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </span>
+            Visualization
+          </button>
+          <button class="nav-item" data-view="historyView" type="button">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h5"/><path d="M10 13h7"/><path d="M10 17h5"/></svg>
+            </span>
+            History
+          </button>
+          <button class="nav-item" data-view="settingsView" type="button">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M9 11l2 2 4-5"/><path d="M20 12c0 5-3.5 8-8 9-4.5-1-8-4-8-9V5l8-3 8 3z"/></svg>
+            </span>
+            Clinical
+          </button>
+        </nav>
+
+        <div class="sidebar-status">
+          <span class="status-dot"></span>
+          <div>
+            <strong id="apiStatusLabel">API Ready</strong>
+            <small>FastAPI endpoint selected</small>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="page-header">
+          <div>
+            <p class="eyebrow">Brain MRI Decision Support</p>
+            <h1>TriNeuro AI Dashboard</h1>
+            <p class="lead">Upload MRI modalities, run classification, review seg_model.pth segmentation, and generate the structured report.</p>
+          </div>
+        </header>
+
+        <section id="analysisView" class="view active">
+          <div class="analysis-grid">
+            <article class="card upload-panel">
+              <div class="card-heading">
+                <div>
+                  <span class="section-number">01</span>
+                  <h2>MRI Input</h2>
+                </div>
+                <span class="chip">NIfTI</span>
+              </div>
+
+              <div class="field-grid">
+                <label class="field">
+                  Patient ID
+                  <input id="patientId" placeholder="e.g. BraTS-GLI-00495" />
+                </label>
+
+                <label class="field">
+                  Prior patient context
+                  <select id="historySelect">
+                    <option value="">No previous patient selected</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="upload-grid">
+                <label class="upload-card required">
+                  <span>Primary MRI</span>
+                  <small>Required. Any modality is accepted for the current pipeline route.</small>
+                  <input id="primaryFile" type="file" />
+                </label>
+                <label class="upload-card">
+                  <span>T1n</span>
+                  <small>Native T1, used by the segmentation model when available.</small>
+                  <input id="t1nFile" type="file" />
+                </label>
+                <label class="upload-card">
+                  <span>T1c</span>
+                  <small>Post-contrast T1, used by segmentation and tumor typing.</small>
+                  <input id="t1cFile" type="file" />
+                </label>
+                <label class="upload-card">
+                  <span>T2w</span>
+                  <small>T2-weighted, used by tumor screening and segmentation.</small>
+                  <input id="t2wFile" type="file" />
+                </label>
+                <label class="upload-card">
+                  <span>T2F / FLAIR</span>
+                  <small>FLAIR modality, used by segmentation and tumor typing.</small>
+                  <input id="t2fFile" type="file" />
+                </label>
+              </div>
+
+              <div class="button-row">
+                <button id="runButton" class="primary-button" type="button">Run TriNeuro Pipeline</button>
+                <button id="resetInputs" class="ghost-button" type="button">Reset Case Inputs</button>
+              </div>
+              <p id="statusText" class="status-text">Ready. Upload a primary MRI to start.</p>
+            </article>
+
+            <article class="card report-card">
+              <div class="card-heading">
+                <div>
+                  <span class="section-number">02</span>
+                  <h2>Final AI Report</h2>
+                </div>
+                <button id="downloadReport" class="download-report-button" type="button">Download Report</button>
+              </div>
+
+              <div class="metric-row">
+                <div class="metric">
+                  <span>Tumor screen</span>
+                  <strong id="tumorLabel">--</strong>
+                </div>
+                <div class="metric">
+                  <span>Tumor type</span>
+                  <strong id="typeLabel">--</strong>
+                </div>
+                <div class="metric">
+                  <span>Segmentation</span>
+                  <strong id="segmentationStatus">--</strong>
+                  <small id="segmentationSource">Source --</small>
+                </div>
+              </div>
+
+              <div class="report-layout">
+                <input id="reportText" type="hidden" value="The final report will appear here after running the TriNeuro AI pipeline." />
+                <div id="reportPreview" class="report-preview" aria-live="polite">The final report will appear here after running the TriNeuro AI pipeline.</div>
+                <div id="reportLoading" class="report-loading" aria-hidden="true">
+                  <div class="report-spinner"></div>
+                  <span>Generating report...</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+        </section>
+
+        <section id="visualizationView" class="view">
+          <div class="visual-grid">
+            <article class="card viewer-card">
+              <div class="viewer-title">
+                <h2>Interactive MRI Slices</h2>
+                <select id="planeSelect">
+                  <option value="axial">Axial</option>
+                  <option value="coronal">Coronal</option>
+                  <option value="sagittal">Sagittal</option>
+                </select>
+              </div>
+              <div class="slice-stage">
+                <canvas id="mriCanvas" width="760" height="620"></canvas>
+                <div class="slice-overlay-label" id="sliceLabel"></div>
+              </div>
+              <input id="sliceSlider" type="range" min="0" max="100" value="52" />
+            </article>
+
+            <article class="card viewer-card">
+              <div class="viewer-title">
+                <h2>Segmentation Mask</h2>
+              </div>
+              <div class="xai-stage">
+                <canvas id="xaiCanvas" width="760" height="620" aria-label="Segmentation overlay preview"></canvas>
+                <div class="slice-overlay-label" id="xaiSliceLabel"></div>
+              </div>
+              <p class="caption" id="xaiCaption">Run the API to generate the segmentation mask from the uploaded MRI.</p>
+            </article>
+          </div>
+
+          <article class="card full-panel-card">
+            <div class="viewer-title">
+              <h2>Full Notebook AI Panel</h2>
+              <span class="chip">Same-slice MRI / Segmentation / Grad-CAM++ / Attention</span>
+            </div>
+            <div class="full-panel-stage">
+              <img id="fullPanelImage" alt="Full Grad-CAM and segmentation panel" />
+            </div>
+          </article>
+        </section>
+
+        <section id="historyView" class="view">
+          <article class="card">
+            <div class="card-heading">
+              <div>
+                <span class="section-number">03</span>
+                <h2>Patient History</h2>
+              </div>
+              <button id="clearHistory" class="ghost-button narrow" type="button">Clear History</button>
+            </div>
+            <div id="historyList" class="history-list"></div>
+          </article>
+        </section>
+
+        <section id="settingsView" class="view">
+          <article class="card settings-card">
+            <div class="card-heading">
+              <div>
+                <span class="section-number">04</span>
+                <h2>Clinical Review</h2>
+              </div>
+              <span class="chip">Decision Support</span>
+            </div>
+            <div class="settings-grid">
+              <div class="settings-section wide clinical-banner">
+                <h3>Radiologist Review Required</h3>
+                <p>
+                  TriNeuro AI provides decision-support outputs only. The final interpretation should be based on the complete MRI study,
+                  prior examinations, clinical context, and radiologist assessment.
+                </p>
+              </div>
+              <div class="settings-section">
+                <h3>Evidence Generated</h3>
+                <ul class="review-list">
+                  <li>
+                    <span>Classification</span>
+                    <strong>No-tumor/tumor screening and glioma/meningioma routing when a tumor is detected.</strong>
+                  </li>
+                  <li>
+                    <span>Segmentation</span>
+                    <strong>Lesion mask used for volume, diameter, axial span, laterality, and shape estimates.</strong>
+                  </li>
+                  <li>
+                    <span>Explainability</span>
+                    <strong>Grad-CAM++ and guided attention panels show regions that influenced the model.</strong>
+                  </li>
+                  <li>
+                    <span>Report draft</span>
+                    <strong>Structured report text is generated from model outputs and segmentation measurements.</strong>
+                  </li>
+                </ul>
+              </div>
+              <div class="settings-section">
+                <h3>Review Priorities</h3>
+                <ul class="review-list check-list">
+                  <li>Confirm MRI sequence identity and alignment before relying on overlays.</li>
+                  <li>Compare segmentation boundaries against original T1c, T2w, and FLAIR images.</li>
+                  <li>Check whether Grad-CAM focus is anatomically plausible and overlaps the lesion region.</li>
+                  <li>Correlate automated tumor type with imaging phenotype, prior studies, and pathology when available.</li>
+                </ul>
+              </div>
+              <div class="settings-section wide">
+                <h3>Report Safety Notes</h3>
+                <div class="note-grid">
+                  <p>Automated measurements are estimates and may change with modality quality, registration, field of view, or incomplete uploads.</p>
+                  <p>No tumor-screening result should exclude subtle pathology without full image review.</p>
+                  <p>The generated report should be edited before use in any clinical, educational, or presentation context.</p>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

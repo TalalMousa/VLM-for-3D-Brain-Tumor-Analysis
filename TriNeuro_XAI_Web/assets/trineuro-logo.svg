@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 260" role="img" aria-label="TriNeuro AI logo">
+  <defs>
+    <linearGradient id="word" x1="230" y1="0" x2="650" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.45" stop-color="#1f8cff"/>
+      <stop offset="1" stop-color="#9a5cff"/>
+    </linearGradient>
+    <radialGradient id="hot" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fff36a"/>
+      <stop offset="0.34" stop-color="#ff375f"/>
+      <stop offset="0.76" stop-color="#704dff"/>
+      <stop offset="1" stop-color="#1f8cff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="760" height="260" rx="28" fill="#061120"/>
+  <g transform="translate(34 32)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M85 12c-26 0-41 19-39 42-21 3-35 19-35 41 0 19 11 34 28 40-2 23 15 42 39 42h39V12H85Z" stroke="#ffffff" stroke-width="7"/>
+    <path d="M68 49c-13 1-24 10-27 23M81 80c-16-7-33 1-39 17M83 131c-12 2-22 10-26 22M112 45c-14 6-21 18-20 32M110 105c-17 0-29 10-32 25" stroke="#ffffff" stroke-width="5"/>
+    <path d="M136 12v165M136 12l52 22 38 49-9 65-81 29M188 34l2 72 27 42M190 106l-54 71M188 34l29 114M136 70l54 36" stroke="#66d9ff" stroke-width="4"/>
+    <path d="M188 34l38 49M190 106l27 42M136 12l81 136" stroke="#8b63ff" stroke-width="3"/>
+    <g fill="#77dcff" stroke="none">
+      <circle cx="136" cy="12" r="7"/>
+      <circle cx="188" cy="34" r="7"/>
+      <circle cx="226" cy="83" r="7"/>
+      <circle cx="217" cy="148" r="7"/>
+      <circle cx="136" cy="177" r="7"/>
+      <circle cx="190" cy="106" r="7"/>
+    </g>
+    <circle cx="160" cy="94" r="33" fill="url(#hot)" filter="url(#glow)" stroke="none"/>
+    <circle cx="160" cy="94" r="8" fill="#fff36a" stroke="none"/>
+  </g>
+  <text x="270" y="105" font-family="Inter, Arial, sans-serif" font-size="62" font-weight="800" fill="url(#word)">TriNeuro AI</text>
+  <path d="M336 130h120M477 130h120" stroke="#5a9fff" stroke-width="3"/>
+  <circle cx="466" cy="130" r="4" fill="#9a5cff"/>
+  <text x="294" y="168" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="700" letter-spacing="5" fill="#ffffff">EXPLAINABLE BRAIN MRI INTELLIGENCE</text>
+</svg>
